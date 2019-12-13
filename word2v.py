@@ -9,6 +9,12 @@ import re
 import tensorflow.compat.v1 as tf
 tf.disable_v2_behavior()
 
+
+"""
+aneesh joshi (2017) Learn Word2Vec by implementing it in tensorflow (tutorial)
+https://towardsdatascience.com/learn-word2vec-by-implementing-it-in-tensorflow-45641adaf2ac
+
+"""
 def matchvword(vectors, words): 
     df = pd.DataFrame(vectors, columns = ['x1', 'x2'])
     df['word'] = words
@@ -41,6 +47,7 @@ def to_one_hot_encoding(data_point_index, ONE_HOT_DIM):
     one_hot_encoding = np.zeros(ONE_HOT_DIM)
     one_hot_encoding[data_point_index] = 1
     return one_hot_encoding
+
 
 def computational_graph(words, word2int, data):
     ONE_HOT_DIM = len(words)
