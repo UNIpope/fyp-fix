@@ -13,14 +13,13 @@ tf.disable_v2_behavior()
 """
 aneesh joshi (2017) Learn Word2Vec by implementing it in tensorflow (tutorial)
 https://towardsdatascience.com/learn-word2vec-by-implementing-it-in-tensorflow-45641adaf2ac
-
 """
 def matchvword(vectors, words): 
     df = pd.DataFrame(vectors, columns = ['x1', 'x2'])
     df['word'] = words
     df = df[['word', 'x1', 'x2']]
 
-    return df.to_json()
+    return df
 
     
 def train_data(train_op, X_train, Y_train, loss, W1, b1, x, y_label):
@@ -28,7 +27,7 @@ def train_data(train_op, X_train, Y_train, loss, W1, b1, x, y_label):
     init = tf.global_variables_initializer()
     sess.run(init) 
 
-    iteration = 12000
+    iteration = 9000
     for i in range(iteration):
         # input is X_train which is one hot encoded word
         # label is Y_train which is one hot encoded neighbor word
@@ -49,7 +48,7 @@ def to_one_hot_encoding(data_point_index, ONE_HOT_DIM):
     return one_hot_encoding
 
 
-def computational_graph(words, word2int, data, df):
+def computational_graph(words, word2int, data):
     ONE_HOT_DIM = len(words)
     X = [] # input word
     Y = [] # target word
@@ -114,20 +113,7 @@ def convertword2int(words):
 def remove_stop_words(corpus):
     stwords = ['is', 'a', 'will', 'be', 'on', 'to', 'as', 'the']
     out = []
-    texto = ""
-
     for text in corpus:
-        for word in re.split("\W+",text):
-            if word not in stwords:
-               texto += word + " "
-        out.append(texto)
-        texto = ""
-        
-    print(out)
-
-    """
-    for text in corpus:
-        print(text)
         tmp = text.split(' ')
 
         for word in stwords:
@@ -135,73 +121,40 @@ def remove_stop_words(corpus):
                 tmp.remove(word)
 
         out.append(" ".join(tmp))
-    """
+    
     return out
 
-def gettxtf(fname):
+def gettxt(fname):
     out = []
-
-    # Matches whitespace char \s + alphanumeric and underscore \w
-    # Negative set [^ ] + OR _ |_
-    # 1 or more +
     pattern = re.compile('([^\s\w]|_)+')
-
     with open(fname, "r") as fl:
-        txt = fl.read().lower().replace("\n", "").replace(" ", ".")
-        ls = txt.split(". ")
+        txt = fl.read().lower().replace("\n", "").replace(",", ".")
+        ls = txt.split(".")
         for sen in ls:
             out.append(pattern.sub('', sen))
 
-        print(out)
+        print("jdgjhdghjgd{}",out)
         return out
 
-def cleantxt(text):
-    # Matches whitespace char \s + alphanumeric and underscore \w
-    # Negative set [^ ] + OR _ |_
-    # 1 or more +
-    pattern = re.compile('([^\s\w]|_)+')
-    out = []
 
-    txt = text.lower().replace("\n", "").replace(",", ".")
-    print(txt)
-    ls = txt.split(". ")
-    for sen in ls:
-            out.append(pattern.sub('', sen))
+#Get and clean text
+corpus = gettxt("testtxt.txt")
+corpus = remove_stop_words(corpus)
 
-    print(out)
-    return out
+words = []
+for text in corpus:
+    for word in text.split(' '):
+        words.append(word)
 
+words = list(filter(None, words))
+words = set(words)
 
-def api(text):
-    #Get and clean text
-    #corpus = gettxtf("testtxt.txt")
-    corpus = cleantxt(text)
-    corpus = remove_stop_words(corpus)
+word2int = convertword2int(words)
+data = genskipgramdata(corpus, word2int)
+df = pd.DataFrame(data, columns = ['input', 'label'])
 
-    words = []
-    for text in corpus:
-        for word in text.split(' '):
-            words.append(word)
+train_op, loss, W1, b1, X_train, Y_train, x, y_label = computational_graph(words, word2int, data)
+vectors = train_data(train_op, X_train, Y_train, loss, W1, b1, x, y_label)
 
-    words = list(filter(None, words))
-    words = set(words)
-
-    word2int = convertword2int(words)
-    data = genskipgramdata(corpus, word2int)
-    df = pd.DataFrame(data, columns = ['input', 'label'])
-
-    train_op, loss, W1, b1, X_train, Y_train, x, y_label = computational_graph(words, word2int, data, df)
-    vectors = train_data(train_op, X_train, Y_train, loss, W1, b1, x, y_label)
-
-    out = matchvword(vectors, words)
-    print(out)
-    return out
-
-"""
-text = "A handful of major states resisted pressure on Sunday to ramp up efforts to combat global warming as a U.N. climate summit ground to a close, angering smaller countries and a growing protest movement that is pushing for emergency action.\
-The COP25 talks in Madrid were viewed as a test of governments' collective will to heed the advice of science to cut greenhouse gas emissions more rapidly, in order to prevent rising global temperatures from hitting irreversible tipping points.\
-But the conference, in its concluding draft, endorsed only a declaration on the \"urgent need\" to close the gap between existing emissions pledges and the temperature goals of the landmark 2015 Paris climate agreement - an outcome U.N. Secretary-General Antonio Guterres called disappointing.\
-Many developing countries and campaigners had wanted to see much more explicit language spelling out the importance of countries submitting bolder pledges on emissions as the Paris process enters a crucial implementation phase next year."
-
-o = api(text)
-"""
+out = matchvword(vectors, words)
+print(out)
