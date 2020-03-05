@@ -26,16 +26,17 @@ def matchvword(vectors, words):
 def train_data(train_op, X_train, Y_train, loss, W1, b1, x, y_label):
     sess = tf.Session()
     init = tf.global_variables_initializer()
-    sess.run(init) 
+    sess.run(init)
 
     iteration = 12000
     for i in range(iteration):
         # input is X_train which is one hot encoded word
         # label is Y_train which is one hot encoded neighbor word
         sess.run(train_op, feed_dict={x: X_train, y_label: Y_train})
+        
         if i % 3000 == 0:
-            print('iteration '+str(i)+' loss is : ', sess.run(loss, feed_dict={x: X_train, y_label: Y_train}))
-
+            #print('iteration '+str(i)+' loss is : ', sess.run(loss, feed_dict={x: X_train, y_label: Y_train}))
+            sess.run(loss, feed_dict={x: X_train, y_label: Y_train})
     # Now the hidden layer (W1 + b1) is actually the word look up table
     vectors = sess.run(W1 + b1)
 
@@ -122,8 +123,6 @@ def remove_stop_words(corpus):
                texto += word + " "
         out.append(texto)
         texto = ""
-        
-    print(out)
 
     """
     for text in corpus:
@@ -163,12 +162,10 @@ def cleantxt(text):
     out = []
 
     txt = text.lower().replace("\n", "").replace(",", ".")
-    print(txt)
     ls = txt.split(". ")
     for sen in ls:
             out.append(pattern.sub('', sen))
 
-    print(out)
     return out
 
 
@@ -194,7 +191,6 @@ def api(text):
     vectors = train_data(train_op, X_train, Y_train, loss, W1, b1, x, y_label)
 
     out = matchvword(vectors, words)
-    print(out)
     return out
 
 """

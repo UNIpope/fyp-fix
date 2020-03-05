@@ -1,24 +1,17 @@
 from flask import Flask, request, jsonify
-from flask_restful import Resource, Api
-
 
 app = Flask(__name__)
-api = Api(app)
 
-class word2vec(Resource):
-    def get(self):
+@app.route('/', methods=['GET','POST'])
+def word2vecapi():
+    if request.method == 'POST':
+        return {"input":"string", "output":"labled vectors"}
+    elif request.method == 'GET':
         return {
-        "About":"the api to interact with word2vec",
+        "About":"the api to interact with word2vecdada",
         "Usage":{"input":"string", "output":"labled vectors"}
         }
 
-    def post(self):
-        print(request.json, request.data)
-        #inputstr = request.get_json(force=True)
-        #print(inputstr)
-        #return jsonify("out",inputstr)
-
-api.add_resource(word2vec, "/")
 
 if __name__ == '__main__':
     app.run(debug=True)
