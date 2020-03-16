@@ -1,0 +1,8 @@
+~*
+*.bin
+*.gz
+*.exe
+*.log
+*.ckpt
+*.bin.gz
+fypjs/
