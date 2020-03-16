@@ -3,20 +3,25 @@ alert("text getting");
 var contents = document.body.innerText;
 console.log(contents)
 
-
 var sentences = contents.split("\n");
 var sentencesout = sentences.filter(sentence => (sentence.length > 15 && /[^\w\s]/.test(sentence)));
+var sentences = sentencesout.join(". ");
 
 async function postData(url = '', data = {}) {
     // Default options are marked with *
     const response = await fetch(url, {
         method: 'POST', // *GET, POST, PUT, DELETE, etc.
-        headers: {'Content-Type': 'application/json'},
+        mode: 'cors',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)   
     });
     return await response.json(); // parses JSON response into native JavaScript objects
   }
 
-postData('http://localhost:5000/', {"hi":"tst", "hello":"nothin"})
+postData('http://localhost:5000/', {"content": sentences, "hello":"nothin"})
     .then((data) => {
         console.log(data); // JSON data parsed by `response.json()` call
 });

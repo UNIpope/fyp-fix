@@ -2,8 +2,14 @@ from flask import request
 import flask
 from word2v import api
 
+from flask_cors import CORS
+
+from platform import python_version
+print(python_version())
+
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 #curl -i  -X GET http://localhost:5000/
 @app.route('/', methods=['GET'])
@@ -19,4 +25,5 @@ def post_method():
     out = api(request.json["content"])
     return out
 
+CORS(app)
 app.run()
