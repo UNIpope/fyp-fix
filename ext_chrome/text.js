@@ -21,7 +21,7 @@ async function postData(url = '', data = {}) {
     return await response.json(); // parses JSON response into native JavaScript objects
   }
 
-postData('http://localhost:5000/', {"content": sentences, "hello":"nothin"})
+postData('http://localhost:5000/w2v', {"content": sentences, "hello":"nothin"})
     .then((data) => {
         console.log(data); // JSON data parsed by `response.json()` call
 });

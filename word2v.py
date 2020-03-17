@@ -169,7 +169,7 @@ def cleantxt(text):
     return out
 
 
-def api(text):
+def apiw2v(text):
     #Get and clean text
     #corpus = gettxtf("testtxt.txt")
     corpus = cleantxt(text)
