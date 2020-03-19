@@ -17,7 +17,7 @@ def get_method_w2v():
     "Usage":{"content":"string (The quick fox)", "output":"labled vectors"}
     }
 
-@app.route('/image', methods=['GET'])
+@app.route('/imagee', methods=['GET'])
 def get_method_image():
     return {
     "About":"the api to interact with image ",
@@ -92,8 +92,6 @@ def post_method_tester():
         print(err)
 
     return 0
-
-
 
 CORS(app)
 app.run()

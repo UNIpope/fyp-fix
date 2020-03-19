@@ -9,18 +9,19 @@ print(str(synset[0].examples()))
 print("---------------------------------------------------------------")
 syn = list()
 ant = list()
-for synset in wordnet.synsets("jersey"):
+for synset in wordnet.synsets("car"):
     for lemma in synset.lemmas():
         syn.append(lemma.name())    #add the synonyms
-        #if lemma.antonyms():    #When antonyms are available, add them into the list
-            #ant.append(lemma.antonyms()[0].name()
+        if lemma.antonyms():    #When antonyms are available, add them into the list
+            ant.append(lemma.antonyms()[0].name())
 
 print("Synonyms: " + str(syn))
-##print('Antonyms: ' + str(ant))
+print('Antonyms: ' + str(ant))
 
 print("---------------------------------------------------------------")
-set_ = wordnet.synset('jersey.n.03')
+set_ = wordnet.synset('shirt')
 print(set_.hypernyms())
+
 print(set_.hyponyms())
 print(set_.member_holonyms())
 print(set_.root_hypernyms())
@@ -37,10 +38,10 @@ for synset in wordnet.synsets("jersey"):
 pprint("Synonyms: " + str(syn))
 
 """
-
+"""
 from nltk.corpus import wordnet
 
 sy = wordnet.synsets("jersey")
 for nn in sy:
     print(nn.hypernyms())
-
+"""
