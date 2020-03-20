@@ -33,7 +33,7 @@ def whatisthis(testword):
     whats = list(filter(lambda what: thefilter(what, testword), list(dict.fromkeys(whats))))
     return whats
 
-def doublebarrel_label_handeling(testword):
+def doubleword_label_handeling(testword):
     whats = []
     testwords = testword.split(" ")
 
@@ -51,4 +51,4 @@ def compare(image, content):
 if __name__ == "__main__":
     #red-breasted merganser, red wine
     print(whatisthis("hen-of-the-woods"))
-    print(doublebarrel_label_handeling("red wine"))
+    print(doubleword_label_handeling("red wine"))

@@ -1,9 +1,9 @@
 import unittest
-from compare import doublebarrel_label_handeling
+from compare import doubleword_label_handeling
 
 class testwhatisthis(unittest.TestCase):
     def test_str_ls(self):
-        out = doublebarrel_label_handeling("car")
+        out = doubleword_label_handeling("car")
         self.assertTrue(type(out) == list)
     
     def test_str_ls_labels(self):
@@ -13,7 +13,7 @@ class testwhatisthis(unittest.TestCase):
         for label in labels:
             clean = label.strip("\n")
             with self.subTest(clean=clean):
-                out = doublebarrel_label_handeling(clean)
+                out = doubleword_label_handeling(clean)
                 self.assertTrue(type(out) == list)
 
     def test_str_none_labels(self):
@@ -23,7 +23,7 @@ class testwhatisthis(unittest.TestCase):
         for label in labels:
             clean = label.strip("\n")
             with self.subTest(clean=clean):
-                out = doublebarrel_label_handeling(clean)
+                out = doubleword_label_handeling(clean)
                 self.assertTrue(out)
 
 
