@@ -1,31 +1,30 @@
 import unittest
-from compare import whatisthis
+from compare import doublebarrel_label_handeling
 
 class testwhatisthis(unittest.TestCase):
     def test_str_ls(self):
-        out = whatisthis("car")
+        out = doublebarrel_label_handeling("car")
         self.assertTrue(type(out) == list)
     
-    def test_str_ls_lables(self):
-        with open("imagelableunit.txt", "r") as lablesf:
-            lables = lablesf.readlines()
+    def test_str_ls_labels(self):
+        with open("imagelabelunit.txt", "r") as labelsf:
+            labels = labelsf.readlines()
 
-        for lable in lables:
-            clean = lable.strip("\n")
+        for label in labels:
+            clean = label.strip("\n")
             with self.subTest(clean=clean):
-                out = whatisthis(clean)
+                out = doublebarrel_label_handeling(clean)
                 self.assertTrue(type(out) == list)
 
-    def test_str_none_lables(self):
-        with open("imagelableunit.txt", "r") as lablesf:
-            lables = lablesf.readlines()
+    def test_str_none_labels(self):
+        with open("imagelabelunit.txt", "r") as labelsf:
+            labels = labelsf.readlines()
 
-        for lable in lables:
-            clean = lable.strip("\n")
+        for label in labels:
+            clean = label.strip("\n")
             with self.subTest(clean=clean):
-                out = whatisthis(clean)
+                out = doublebarrel_label_handeling(clean)
                 self.assertTrue(out)
-
 
 
 if __name__ == "__main__":
