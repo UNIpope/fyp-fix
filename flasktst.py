@@ -2,10 +2,9 @@ from flask import request
 import flask
 from flask_cors import CORS
 
-from word2v import apiw2v
-from testimagedec import apiim
+from word2v import multiprocw2v
+from testimagedec import multiprocim
 
-from multiprocessing import Pool
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
@@ -67,16 +66,12 @@ def get_method_compare():
 #curl -i -H "Content-Type: application/json" -X POST -d '{"content": "A short story is a piece of prose fiction that typically can be read in one sitting and focuses on a self-contained incident or series of linked incidents, with the intent of evoking a"}' http://localhost:5000/
 @app.route('/w2v', methods=['POST'])
 def post_method_w2v():
-	#out = apiw2v(request.json["content"])
-	#return out
-	print(type(request.json["content"]))
-	f = _pool.apply_async(apiw2v,[request.json["content"]])
-	r = f.get()
-	return r
+	out = multiprocw2v(request.json["content"])
+	return out
 
 @app.route('/image', methods=['POST', 'GET'])
 def post_method_imagepred():
-    out = apiim()
+    out = multiprocim()
     return out
 
 @app.route('/compare', methods=['POST'])
@@ -85,28 +80,19 @@ def post_method_compare():
 
 @app.route('/test', methods=['POST'])
 def post_method_tester():
-    import base64
-    try:
-        #imagefile = flask.request.files.get('imagefile', '')
-        coded_string = request.json["image"]
-        im = base64.b64decode(coded_string)
-        import cv2 
-        cv2.imshow("ada",im)
-        key = cv2.waitKey(0)
-    
-    except Exception as err:
-        print("------------")
-        print(err)
+	import base64, re
+	from io import BytesIO
+	from PIL import Image
 
-    return 0
+	coded_string = request.json["image"]
+	base64_data = re.sub('^data:image/.+;base64,', '', coded_string)
+	byte_data = base64.b64decode(base64_data)
+	image_data = BytesIO(byte_data)
+
+	img = Image.open(image_data)
+	img.save(str(t) + '.png', "PNG")
 
 
 if __name__=='__main__':
-	_pool = Pool(processes=4)
-	try:
-		# insert production server deployment code
-		CORS(app)
-		app.run()
-	except KeyboardInterrupt:
-		_pool.close()
-		_pool.join()
+    CORS(app)
+    app.run()

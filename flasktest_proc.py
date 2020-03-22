@@ -9,8 +9,6 @@ from testimagedec import multiprocim
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 app.config['CORS_HEADERS'] = 'Content-Type'
-_pool = None
-
 
 @app.route('/w2v', methods=['GET'])
 def get_method_w2v():
