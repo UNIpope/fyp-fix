@@ -1,5 +1,10 @@
 from nltk.corpus import wordnet
 import re
+import itertools
+
+
+import json
+from pprint import pprint as pp
 
 def whatisthis(testword):
     """Return a list
@@ -43,12 +48,55 @@ def doubleword_label_handeling(testword):
     
     return whats
 
+def convert_to_wordnet(words):
+    wordnet = lambda word: doubleword_label_handeling(word)
+    cwords = list(map(wordnet, words))
 
-def compare(image, content):
-    print(image, content)
+    return cwords
+
+# True: advertisement 
+def wordnet_check(images, words):
+    cimages = convert_to_wordnet(images)
+    cwords = convert_to_wordnet(words)
+
+    #Flatten lists 
+    cimages = list(itertools.chain(*cimages))
+    cwords = list(itertools.chain(*cwords))
+
+    cimages.extend(images)
+    cwords.extend(words)
+
+    pp(cimages)
+    pp(cwords)
+
+    outcomes = []
+    for image in cimages:
+        if image in cwords:
+            outcomes.append(True)
+        else:
+            outcomes.append(False)
+
+    if outcomes.count(False) == 0:
+        return False
+    else:
+        return True
+
+def compare(data):
+    images = data["image"]
+    contents = data["content"]
+
+    words = [ v for v in contents["word"].values() ]
+    print(wordnet_check(images, words))
+#
     return "sdfhhjk"
+
+def testing_compare(fname="inputcompare.json"):
+    with open(fname) as json_file:
+        data = json.load(json_file)
+
+    compare(data)
 
 if __name__ == "__main__":
     #red-breasted merganser, red wine
-    print(whatisthis("hen-of-the-woods"))
     print(doubleword_label_handeling("red wine"))
+    testing_compare()
