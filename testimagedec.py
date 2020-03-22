@@ -6,12 +6,13 @@ import tensorflow_hub as hub
 
 from tensorflow.keras import layers
 
+import multiprocessing
 import numpy as np
 import PIL.Image as Image
 import cv2 
 
 
-def apiim():
+def apiim(im, return_dictim):
     IMAGE_SHAPE = (224, 224)
 
     classifier_url = "https://tfhub.dev/google/tf2-preview/inception_v3/classification/4"
@@ -40,12 +41,27 @@ def apiim():
     print(predicted_class)
     key = cv2.waitKey(0)
 
-    return predicted_class_name.title()
+    return_dictim["im"] = str(predicted_class_name.title())
+    return return_dictim
+
+
+def multiprocim():
+    managerim = multiprocessing.Manager()
+    return_dictim = managerim.dict()
+
+    im = None
+    p = multiprocessing.Process(target=apiim, args=(im, return_dictim))
+    p.start()
+
+    p.join()
+    return return_dictim.values()[0]
+
+
+if __name__ == "__main__":
+    out = multiprocim()
+    print(out)
 
 """
-out = pred()
-print(out)
-
 export_path = "/saved_models"
 classifier.save(export_path, save_format='tf')
 reloaded = tf.keras.models.load_model(export_path)

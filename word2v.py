@@ -3,6 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import re
 
+import multiprocessing
+from numba import cuda
 # import tensorflow as tf 
 # AttributeError: 'module' object has no attribute 'placeholder'
 # use api 1 as is removed in 2
@@ -169,7 +171,7 @@ def cleantxt(text):
     return out
 
 
-def apiw2v(text):
+def apiw2v(text, return_dict):
     #Get and clean text
     #corpus = gettxtf("testtxt.txt")
     corpus = cleantxt(text)
@@ -191,7 +193,21 @@ def apiw2v(text):
     vectors = train_data(train_op, X_train, Y_train, loss, W1, b1, x, y_label)
 
     out = matchvword(vectors, words)
-    return out
+    return_dict["w2v"] = out
+    return return_dict
+
+
+def multiprocw2v(text):
+    manager = multiprocessing.Manager()
+    return_dict = manager.dict()
+
+    p = multiprocessing.Process(target=apiw2v, args=(text, return_dict))
+    p.start()
+
+    p.join()
+    return return_dict.values()[0]
+
+
 
 """
 text = "A handful of major states resisted pressure on Sunday to ramp up efforts to combat global warming as a U.N. climate summit ground to a close, angering smaller countries and a growing protest movement that is pushing for emergency action.\

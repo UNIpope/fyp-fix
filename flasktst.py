@@ -5,9 +5,12 @@ from flask_cors import CORS
 from word2v import apiw2v
 from testimagedec import apiim
 
+from multiprocessing import Pool
+
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 app.config['CORS_HEADERS'] = 'Content-Type'
+_pool = None
 
 
 @app.route('/w2v', methods=['GET'])
@@ -64,8 +67,12 @@ def get_method_compare():
 #curl -i -H "Content-Type: application/json" -X POST -d '{"content": "A short story is a piece of prose fiction that typically can be read in one sitting and focuses on a self-contained incident or series of linked incidents, with the intent of evoking a"}' http://localhost:5000/
 @app.route('/w2v', methods=['POST'])
 def post_method_w2v():
-    out = apiw2v(request.json["content"])
-    return out
+	#out = apiw2v(request.json["content"])
+	#return out
+	print(type(request.json["content"]))
+	f = _pool.apply_async(apiw2v,[request.json["content"]])
+	r = f.get()
+	return r
 
 @app.route('/image', methods=['POST', 'GET'])
 def post_method_imagepred():
@@ -93,5 +100,13 @@ def post_method_tester():
 
     return 0
 
-CORS(app)
-app.run()
+
+if __name__=='__main__':
+	_pool = Pool(processes=4)
+	try:
+		# insert production server deployment code
+		CORS(app)
+		app.run()
+	except KeyboardInterrupt:
+		_pool.close()
+		_pool.join()
