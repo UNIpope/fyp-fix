@@ -12,21 +12,17 @@ import PIL.Image as Image
 import cv2 
 
 
-def apiim(im, return_dictim):
+def apiim( im, return_dictim):
     IMAGE_SHAPE = (224, 224)
+    image = np.array(im)/255.0
 
     classifier_url = "https://tfhub.dev/google/tf2-preview/inception_v3/classification/4"
     classifier = tf.keras.Sequential([
         hub.KerasLayer(classifier_url, input_shape=IMAGE_SHAPE+(3,))
     ])
 
-    image = Image.open("wiskey.png").resize(IMAGE_SHAPE)
-    image = image.convert("RGB")
-    image = np.array(image)/255.0
-
     result = classifier.predict(image[np.newaxis, ...])
     predicted_class = np.argmax(result[0], axis=-1)
-
 
     labels_path = tf.keras.utils.get_file('ImageNetLabels.txt','https://storage.googleapis.com/download.tensorflow.org/data/ImageNetLabels.txt')
     imagenet_labels = np.array(open(labels_path).read().splitlines())
@@ -42,18 +38,18 @@ def apiim(im, return_dictim):
     key = cv2.waitKey(0)
 
     return_dictim["im"] = str(predicted_class_name.title())
+    im.save("test_img\\"+str(predicted_class_name.title()) + '.png', "PNG")
     return return_dictim
 
 
-def multiprocim():
+def multiprocim(im):
     managerim = multiprocessing.Manager()
     return_dictim = managerim.dict()
 
-    im = None
     p = multiprocessing.Process(target=apiim, args=(im, return_dictim))
     p.start()
-
     p.join()
+
     return return_dictim.values()[0]
 
 

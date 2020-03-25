@@ -5,4 +5,7 @@
 *.log
 *.ckpt
 *.bin.gz
+*.pyc
 fypjs/
+test_img/
+disirtation images/

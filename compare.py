@@ -1,9 +1,9 @@
 from nltk.corpus import wordnet
 import re
 import itertools
+ 
 
-
-import json
+import json, math
 from pprint import pprint as pp
 
 def whatisthis(testword):
@@ -87,7 +87,7 @@ def compare(data):
 
     words = [ v for v in contents["word"].values() ]
     print(wordnet_check(images, words))
-#
+
     return "sdfhhjk"
 
 def testing_compare(fname="inputcompare.json"):
@@ -96,7 +96,41 @@ def testing_compare(fname="inputcompare.json"):
 
     compare(data)
 
+    
+def calculateDistance(x1,y1,x2,y2):  
+    dist = math.sqrt((x2 - x1)**2 + (y2 - y1)**2)  
+    return dist 
+
+def calculateScore(data, word):
+    contents = data["content"]
+    score = 0
+
+    for index in contents["word"]:
+        val = calculateDistance(word["x"], word["y"], contents["x1"][index], contents["x2"][index])
+
+        print(index, val)
+        print(word["x"], word["y"], contents["x1"][index], contents["x2"][index])
+
+        score += val
+        print(score)
+    
+    return score
+
+def distance_metrics(data, word):
+    images = data["image"]
+    contents = data["content"]
+
+    
+
+
+def testing_dist(fname="inputcompare.json"):
+    with open(fname) as json_file:
+        data = json.load(json_file)
+
+    calculateScore(data, {"guess":"looming","x":1.170817852,"y":-0.2876406908})
+    
 if __name__ == "__main__":
     #red-breasted merganser, red wine
     print(doubleword_label_handeling("red wine"))
-    testing_compare()
+    print(calculateDistance(4, 0, 4, 8))
+    testing_dist()
