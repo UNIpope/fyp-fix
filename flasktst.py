@@ -21,11 +21,11 @@ def get_method_w2v():
     "Usage":{"content":"string (The quick fox)", "output":"labled vectors"}
     }
 
-@app.route('/imagee', methods=['GET'])
+@app.route('/image', methods=['GET'])
 def get_method_image():
     return {
     "About":"the api to interact with image ",
-    "Usage":{"images":["image", "image", "image"], "output":"lables"}
+    "Usage":{"images":["image", "image", "image"], "output":"{im :pred}"}
     }
 
 @app.route('/compare', methods=['GET'])
@@ -86,7 +86,7 @@ def decode_im(coded_string):
 	return image
 
 
-@app.route('/image', methods=['POST', 'GET'])
+@app.route('/image', methods=['POST'])
 def post_method_imagepred():
 	coded_string = request.json["image"]
 	image = decode_im(coded_string)

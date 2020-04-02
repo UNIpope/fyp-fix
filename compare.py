@@ -131,6 +131,6 @@ def testing_dist(fname="inputcompare.json"):
     
 if __name__ == "__main__":
     #red-breasted merganser, red wine
-    print(doubleword_label_handeling("red wine"))
+    print(doubleword_label_handeling("wolf"))
     print(calculateDistance(4, 0, 4, 8))
     testing_dist()

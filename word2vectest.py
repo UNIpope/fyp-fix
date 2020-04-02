@@ -42,10 +42,10 @@ def train_data(train_op, X_train, Y_train, loss, W1, b1, x, y_label):
 
 
 # function to convert numbers to one hot vectors
-def to_one_hot_encoding(data_point_index, ONE_HOT_DIM):
-    one_hot_encoding = np.zeros(ONE_HOT_DIM)
-    one_hot_encoding[data_point_index] = 1
-    return one_hot_encoding
+def to_one_hot_encoding(index, dim):
+    encoded = np.zeros(dim)
+    encoded[index] = 1
+    return encoded
 
 
 def computational_graph(words, word2int, data):
@@ -91,12 +91,10 @@ def genskipgramdata(corpus, word2int):
     data = []
     WINDOW_SIZE = 2
 
-    for sentence in corpus:
-        sentences.append(sentence.split())
-
+    sentences = [sentance.split() for sentance in corpus]
     for sentence in sentences:
-        for idx, word in enumerate(sentence):
-            for neighbor in sentence[max(idx - WINDOW_SIZE, 0) : min(idx + WINDOW_SIZE, len(sentence)) + 1] : 
+        for idex, word in enumerate(sentence):
+            for neighbor in sentence[max(idex - WINDOW_SIZE, 0) : min(idex + WINDOW_SIZE, len(sentence)) + 1] : 
                 if neighbor != word:
                     data.append([word, neighbor])
     
@@ -133,9 +131,11 @@ def gettxt(fname):
         for sen in ls:
             out.append(pattern.sub('', sen))
 
-        print("jdgjhdghjgd{}",out)
+        print(out)
         return out
 
+
+from pprint import pprint 
 
 #Get and clean text
 corpus = gettxt("testtxt.txt")
@@ -151,6 +151,10 @@ words = set(words)
 
 word2int = convertword2int(words)
 data = genskipgramdata(corpus, word2int)
+pprint(data)
+pprint(word2int)
+
+"""
 df = pd.DataFrame(data, columns = ['input', 'label'])
 
 train_op, loss, W1, b1, X_train, Y_train, x, y_label = computational_graph(words, word2int, data)
@@ -158,3 +162,4 @@ vectors = train_data(train_op, X_train, Y_train, loss, W1, b1, x, y_label)
 
 out = matchvword(vectors, words)
 print(out)
+"""
