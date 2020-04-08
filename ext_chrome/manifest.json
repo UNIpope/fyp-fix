@@ -5,8 +5,11 @@
     "content_scripts":[
         {
             "matches":["<all_urls>"],
-            "js":["get_images.js"]
+            "js":["get_data.js"]
         }
+    ],
+    "permissions": [
+        "http://localhost/*"
     ],
     "browser_action": {
         "default_popup":"popup.html",
@@ -14,8 +17,5 @@
     },
     "web_accessible_resources": [
         "popup.html"
-    ],
-    "permissions": [
-        "http://localhost/*"
     ]
 }
