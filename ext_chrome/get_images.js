@@ -32,7 +32,7 @@ var images = document.images;
 alert(images.length)
 
 Array.prototype.forEach.call(images, image => {
-    postData('http://localhost:5000/image', {"image": tobase64(image), "hello":"nothin"})
+    postData('http://localhost:5000/image', {"image": tobase64(image)})
         .then((data) => {
             console.log(data);
 }); 

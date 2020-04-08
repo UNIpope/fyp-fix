@@ -29,13 +29,10 @@ def train_data(train_op, X_train, Y_train, loss, W1, b1, x, y_label):
 
     iteration = 9000
     for i in range(iteration):
-        # input is X_train which is one hot encoded word
-        # label is Y_train which is one hot encoded neighbor word
         sess.run(train_op, feed_dict={x: X_train, y_label: Y_train})
         if i % 3000 == 0:
             print('iteration '+str(i)+' loss is : ', sess.run(loss, feed_dict={x: X_train, y_label: Y_train}))
-
-    # Now the hidden layer (W1 + b1) is actually the word look up table
+    
     vectors = sess.run(W1 + b1)
 
     return vectors
@@ -154,7 +151,7 @@ data = genskipgramdata(corpus, word2int)
 pprint(data)
 pprint(word2int)
 
-"""
+
 df = pd.DataFrame(data, columns = ['input', 'label'])
 
 train_op, loss, W1, b1, X_train, Y_train, x, y_label = computational_graph(words, word2int, data)
@@ -162,4 +159,23 @@ vectors = train_data(train_op, X_train, Y_train, loss, W1, b1, x, y_label)
 
 out = matchvword(vectors, words)
 print(out)
-"""
+
+
+import matplotlib.pyplot as plt
+
+plt.scatter(out['x1'], out['x2'])
+
+for word, x1, x2 in zip(out['word'], out['x1'], out['x2']):
+    plt.annotate(word, (x1,x2 ))
+
+PADDING = 1.0
+x_axis_min = np.amin(vectors, axis=0)[0] - PADDING
+y_axis_min = np.amin(vectors, axis=0)[1] - PADDING
+x_axis_max = np.amax(vectors, axis=0)[0] + PADDING
+y_axis_max = np.amax(vectors, axis=0)[1] + PADDING
+
+plt.xlim(x_axis_min,x_axis_max)
+plt.ylim(y_axis_min,y_axis_max)
+plt.rcParams["figure.figsize"] = (10,10)
+
+plt.show() 

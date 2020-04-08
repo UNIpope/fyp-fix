@@ -31,22 +31,24 @@ def pred():
     labels_path = tf.keras.utils.get_file('ImageNetLabels.txt','https://storage.googleapis.com/download.tensorflow.org/data/ImageNetLabels.txt')
     imagenet_labels = np.array(open(labels_path).read().splitlines())
 
-    cv2.imshow("ada",image)
-
     predicted_class_name = imagenet_labels[predicted_class]
+
     _ = plt.title("Prediction: " + predicted_class_name.title())
     print(_)
 
     print(result.shape)
     print(predicted_class)
+    """
+    export_path = "saved_models"
+    classifier.save(export_path, save_format='tf')
+    reloaded = tf.keras.models.load_model(export_path)
+    """
+
     key = cv2.waitKey(0)
 
     return predicted_class_name.title()
 
 out = pred()
 print(out)
-"""
-export_path = "/saved_models"
-classifier.save(export_path, save_format='tf')
-reloaded = tf.keras.models.load_model(export_path)
-"""
+
+

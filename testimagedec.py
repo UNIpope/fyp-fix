@@ -54,11 +54,5 @@ def multiprocim(im):
 
 
 if __name__ == "__main__":
-    out = multiprocim()
+    out = multiprocim(pass)
     print(out)
-
-"""
-export_path = "/saved_models"
-classifier.save(export_path, save_format='tf')
-reloaded = tf.keras.models.load_model(export_path)
-"""
