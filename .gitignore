@@ -8,4 +8,5 @@
 *.pyc
 fypjs/
 test_img/
-disirtation images/
+disirtation_images/
+__pycache__/
