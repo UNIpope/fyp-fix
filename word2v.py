@@ -18,9 +18,9 @@ https://towardsdatascience.com/learn-word2vec-by-implementing-it-in-tensorflow-4
 
 """
 def matchvword(vectors, words): 
-    df = pd.DataFrame(vectors, columns = ['x1', 'x2'])
+    df = pd.DataFrame(vectors, columns = ['x', 'y'])
     df['word'] = words
-    df = df[['word', 'x1', 'x2']]
+    df = df[['word', 'x', 'y']]
 
     return df.to_json()
 
@@ -46,9 +46,9 @@ def train_data(train_op, X_train, Y_train, loss, W1, b1, x, y_label):
 
 
 # function to convert numbers to one hot vectors
-def to_one_hot_encoding(data_point_index, ONE_HOT_DIM):
+def to_one_hot_encoding(index, ONE_HOT_DIM):
     one_hot_encoding = np.zeros(ONE_HOT_DIM)
-    one_hot_encoding[data_point_index] = 1
+    one_hot_encoding[index] = 1
     return one_hot_encoding
 
 
@@ -58,8 +58,8 @@ def computational_graph(words, word2int, data, df):
     Y = [] # target word
 
     for x, y in zip(df['input'], df['label']):
-        X.append(to_one_hot_encoding(word2int[ x ], ONE_HOT_DIM))
-        Y.append(to_one_hot_encoding(word2int[ y ], ONE_HOT_DIM))
+        X.append(to_one_hot_encoding(word2int[x], ONE_HOT_DIM))
+        Y.append(to_one_hot_encoding(word2int[y], ONE_HOT_DIM))
 
     # convert them to numpy arrays
     X_train = np.asarray(X)
@@ -214,8 +214,18 @@ if __name__ == "__main__":
     text = "A handful of major states resisted pressure on Sunday to ramp up efforts to combat global warming as a U.N. climate summit ground to a close, angering smaller countries and a growing protest movement that is pushing for emergency action.\
     The COP25 talks in Madrid were viewed as a test of governments' collective will to heed the advice of science to cut greenhouse gas emissions more rapidly, in order to prevent rising global temperatures from hitting irreversible tipping points.\
     But the conference, in its concluding draft, endorsed only a declaration on the \"urgent need\" to close the gap between existing emissions pledges and the temperature goals of the landmark 2015 Paris climate agreement - an outcome U.N. Secretary-General Antonio Guterres called disappointing.\
-    Many developing countries and campaigners had wanted to see much more explicit language spelling out the importance of countries submitting bolder pledges on emissions as the Paris process enters a crucial implementation phase next year."
+    Many developing countries and campaigners had wanted to see much more explicit language spelling out the importance of countries submitting bolder pledges on emissions as the Paris process enters a crucial implementation phase next year.\
+    Irish restaurateurs are preparing to “go to war” with the insurance industry regarding disputes over policy payouts on foot of the coronavirus crisis.\
+    With the country on full lockdown since March 27, the industry has been ravaged by an enforced lack of business.\
+    However, an alleged blanket refusal on the part of industry insurers to recognise the pandemic as being cause for compensation per the terms of their contracts has led to increasing conflict between the sides.\
+    A handful of major states resisted pressure on Sunday to ramp up efforts to combat global warming as a U.N. climate summit ground to a close, angering smaller countries and a growing protest movement that is pushing for emergency action.\
+    The COP25 talks in Madrid were viewed as a test of governments' collective will to heed the advice of science to cut greenhouse gas emissions more rapidly, in order to prevent rising global temperatures from hitting irreversible tipping points.\
+    But the conference, in its concluding draft, endorsed only a declaration on the \"urgent need\" to close the gap between existing emissions pledges and the temperature goals of the landmark 2015 Paris climate agreement - an outcome U.N. Secretary-General Antonio Guterres called disappointing.\
+    Many developing countries and campaigners had wanted to see much more explicit language spelling out the importance of countries submitting bolder pledges on emissions as the Paris process enters a crucial implementation phase next year.\
+    Irish restaurateurs are preparing to “go to war” with the insurance industry regarding disputes over policy payouts on foot of the coronavirus crisis.\
+    With the country on full lockdown since March 27, the industry has been ravaged by an enforced lack of business.\
+    However, an alleged blanket refusal on the part of industry insurers to recognise the pandemic as being cause for compensation per the terms of their contracts has led to increasing conflict between the sides."
 
     di = dict()
-    o = apiw2v(text, di)
+    o = multiprocw2v(text)
     print(o)

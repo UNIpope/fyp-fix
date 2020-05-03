@@ -27,26 +27,25 @@ async function postData(url = '', data = {}) {
     return await response.json();
 }
 
-alert("stole ya images");
-var images = document.images;
-alert(images.length)
-
-Array.prototype.forEach.call(images, image => {
-    postData('http://localhost:5000/image', {"image": tobase64(image)})
-        .then((data) => {
-            console.log(data);
-}); 
-})
-
 function text(document){
     var contents = document.body.innerText;
-    console.log(contents)
+    var contentsnum = contents.replace(/[0-9]/g, '')
+    var sentences = contentsnum.split(".");
+    var sentencesout = sentences.filter(sentence => (sentence.length > 17 && /[^\w\s]/.test(sentence)));
+    console.log(sentencesout)
+    var senassembled = sentencesout.join(". ");
 
-    var sentences = contents.split("\n");
-    var sentencesout = sentences.filter(sentence => (sentence.length > 15 && /[^\w\s]/.test(sentence)));
-    var sentences = sentencesout.join(". ");
-    return sentences
+    console.log(senassembled)
+    return senassembled
 }
+
+alert("grabbing images");
+
+var imageout = [];
+var dataout = {};
+
+var images = document.images;
+var sentences = text(document);
 
 async function postData(url = '', data = {}) {
     // Default options are marked with *
@@ -62,8 +61,31 @@ async function postData(url = '', data = {}) {
     return await response.json(); // parses JSON response into native JavaScript objects
   }
 
-postData('http://localhost:5000/w2v', {"content": sentences, "hello":"nothin"})
+var promises = [];
+promises.push(
+    postData('http://localhost:5000/w2v', {"content": sentences, "hello":"nothin"})
     .then((data) => {
-        console.log(data); // JSON data parsed by `response.json()` call
+        console.log(data);
+        dataout = {"content":data}
+    })
+);
+
+Array.prototype.forEach.call(images, image => {
+    promises.push(
+        postData('http://localhost:5000/image', {"image": tobase64(image)})
+        .then((data) => {
+            console.log(data);
+            imageout.push(data["im"]);      
+        })
+    )
 });
 
+Promise.all(promises).then(values =>{
+    dataout["image"] = imageout
+    console.log(dataout)
+    postData('http://localhost:5000/compare', dataout)
+    .then((data) => {
+        console.log(data);
+        alert(data["out"]);
+    })
+});

@@ -4,6 +4,7 @@ from flask_cors import CORS
 
 from word2v import multiprocw2v
 from testimagedec import multiprocim
+from compare import advert
 
 import time
 import base64, re
@@ -98,7 +99,8 @@ def post_method_imagepred():
 
 @app.route('/compare', methods=['POST'])
 def post_method_compare():
-    return 0
+	v = advert(request.json)
+	return {"out":v}
 
 @app.route('/test', methods=['POST'])
 def post_method_tester():

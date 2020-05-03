@@ -54,5 +54,5 @@ def multiprocim(im):
 
 
 if __name__ == "__main__":
-    out = multiprocim(pass)
+    out = multiprocim(im)
     print(out)

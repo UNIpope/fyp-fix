@@ -25,7 +25,7 @@ def whatisthis(testword):
 
     if not whats:
         for syn in syns:
-            for lemma in synset.lemmas():
+            for lemma in syn.lemmas():
                 whats.append(lemma.name().lower())
 
     def thefilter(word,testword):
@@ -54,8 +54,8 @@ def convert_to_wordnet(words):
 
     return cwords
 
-# True: advertisement 
-def wordnet_check(images, words):
+# True: advertisement
+def wordnet_check_quick(images, words):
     cimages = convert_to_wordnet(images)
     cwords = convert_to_wordnet(words)
 
@@ -66,9 +66,6 @@ def wordnet_check(images, words):
     cimages.extend(images)
     cwords.extend(words)
 
-    pp(cimages)
-    pp(cwords)
-
     outcomes = []
     for image in cimages:
         if image in cwords:
@@ -76,8 +73,8 @@ def wordnet_check(images, words):
         else:
             outcomes.append(False)
 
-    if outcomes.count(False) == 0:
-        return False
+    if outcomes.count(True) == 0:
+        return "Theres advertisement(s)"
     else:
         return True
 
@@ -86,51 +83,139 @@ def compare(data):
     contents = data["content"]
 
     words = [ v for v in contents["word"].values() ]
-    print(wordnet_check(images, words))
+    out = wordnet_check_quick(images, words)
 
-    return "sdfhhjk"
+    return out
+
+
+#score calculator  
+def calculateDistance(x1,y1,x2,y2):  
+    dist = math.sqrt((x2 - x1)**2 + (y2 - y1)**2)  
+    return dist 
+
+def calculateScores(data):
+    contents = data["content"]
+    scores = {}
+
+    for index in contents["word"]:
+        score = 0
+        for j in contents["word"]:
+            val = calculateDistance(contents["x"][index], contents["y"][index], contents["x"][j], contents["y"][j])
+            score += val
+
+        scores[contents["word"][index]] = score
+
+    
+    print(scores)
+    return scores
+
+#match words
+def lookup(images, words):
+    words = list(words)
+    words = words + images
+    lookup = {}
+    for word in words:
+        whats = doubleword_label_handeling(word)
+        lookup[word] = whats
+
+    return lookup
+
+def get_ads(lookup, scores, data):
+    #get ads
+    ads = []
+    for image in data["image"]:
+        whatsi = lookup[image]
+        print(whatsi)
+        for score in scores:
+            whatss = lookup[score]
+            x = filter(lambda item: any(x in item for x in whatsi), whatss)
+
+            for i in x:
+                if type(i) == str:
+                    ads.append(score)
+    print(ads)
+    ads = list(dict.fromkeys(ads))
+
+    print("below:-----------------------------------")
+    print(ads)
+    print(data["image"])
+
+    return ads
+
+
+def chunkIt(seq, num):
+    avg = len(seq) / float(num)
+    out = []
+    last = 0.0
+
+    while last < len(seq):
+        out.append(seq[int(last):int(last + avg)])
+        last += avg
+
+    return out
+
+def Likely(scores, ads):
+    text = ""
+    vscores = list(scores.values())
+    minim = min(vscores)
+    maxim = max(vscores)
+    ranges = chunkIt(range(int(round(minim)), int(round(maxim))),3)
+
+    for ad in ads:
+        sc = int(round(scores[ad]))
+        if sc in ranges[0]:
+            text = text + ad + ": most likely not an advertisement\n"
+
+        if sc in ranges[1]:
+            text = text + ad + ": very likely not an advertisement\n"
+
+        if sc in ranges[2]:
+            text = text + ad + ": likely not an advertisement\n"
+
+        if sc > ranges[2][-1]:
+            text = text + ad + ": possibly not an advertisement\n"
+            
+    return text
+
+def advert(data):
+    #remove double words
+    imagels = data["image"]
+    outls = []
+
+    for i in imagels:
+        ls = i.split(" ")
+        outls = outls + ls
+
+    data["image"] = outls
+
+    adbool = compare(data)
+    if isinstance(adbool, str) :
+        return adbool
+    else:
+        scores = calculateScores(data)
+        lookupt = lookup(data["image"], data["content"]["word"].values())
+        ads = get_ads(lookupt, scores, data)
+        return Likely(scores, ads)
+
+
+def testing_dist(fname="inputcompare.json"):
+    with open(fname) as json_file:
+        data = json.load(json_file)
+    """
+    scores = calculateScores(data)
+    lookupt = lookup(data["image"], data["content"]["word"].values())
+    ads = get_ads(lookupt, scores, data)
+    print(Likely(scores, ads))
+    """
+    print(advert(data))
 
 def testing_compare(fname="inputcompare.json"):
     with open(fname) as json_file:
         data = json.load(json_file)
 
     compare(data)
-
-    
-def calculateDistance(x1,y1,x2,y2):  
-    dist = math.sqrt((x2 - x1)**2 + (y2 - y1)**2)  
-    return dist 
-
-def calculateScore(data, word):
-    contents = data["content"]
-    score = 0
-
-    for index in contents["word"]:
-        val = calculateDistance(word["x"], word["y"], contents["x1"][index], contents["x2"][index])
-
-        print(index, val)
-        print(word["x"], word["y"], contents["x1"][index], contents["x2"][index])
-
-        score += val
-        print(score)
-    
-    return score
-
-def distance_metrics(data, word):
-    images = data["image"]
-    contents = data["content"]
-
-    
-
-
-def testing_dist(fname="inputcompare.json"):
-    with open(fname) as json_file:
-        data = json.load(json_file)
-
-    calculateScore(data, {"guess":"looming","x":1.170817852,"y":-0.2876406908})
-    
+   
 if __name__ == "__main__":
-    #red-breasted merganser, red wine
-    print(doubleword_label_handeling("wolf"))
-    print(calculateDistance(4, 0, 4, 8))
+    print(doubleword_label_handeling("car wheel"))
     testing_dist()
+    testing_compare()
